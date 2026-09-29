@@ -28,6 +28,9 @@ traces/*
 *.log
 npm-debug.log*
 
+# Cline runtime workflow state - never commit per-run state
+.cline/state/
+
 # OS / editor
 .DS_Store
 .idea/

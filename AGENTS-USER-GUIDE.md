@@ -26,11 +26,12 @@ project), so you can follow along against a real, deterministic target.
 - [8. The Git Agents](#8-the-git-agents)
 - [9. The Jira Import Agent](#9-the-jira-import-agent)
 - [10. The Jira Status Update Agent](#10-the-jira-status-update-agent)
-- [11. End-to-End Workflow Examples](#11-end-to-end-workflow-examples)
-- [12. Skills](#12-skills)
-- [13. Rules, Boundaries & Approval](#13-rules-boundaries--approval)
-- [14. Command Cheat Sheet](#14-command-cheat-sheet)
-- [15. Troubleshooting](#15-troubleshooting)
+- [11. The Orchestrator Agent](#11-the-orchestrator-agent)
+- [12. End-to-End Workflow Examples](#12-end-to-end-workflow-examples)
+- [13. Skills](#13-skills)
+- [14. Rules, Boundaries & Approval](#14-rules-boundaries--approval)
+- [15. Command Cheat Sheet](#15-command-cheat-sheet)
+- [16. Troubleshooting](#16-troubleshooting)
 
 ---
 
@@ -57,13 +58,18 @@ Automation run         →  pass / fail
 The **Git agents** (branch → commit → push → PR) wrap the code you produce safely.
 The **Jira agents** mirror your BDD coverage and results into Jira.
 
+The **Orchestrator Agent** coordinates this whole pipeline: it picks the right
+specialist for each stage, hands context forward, enforces an approval gate between
+stages, and tracks progress in a state file. It **never** does the specialist work
+itself — it only delegates (see [Section 11](#11-the-orchestrator-agent)).
+
 ### Where they live
 
 | Path | Contents |
 | --- | --- |
-| `.cline/agents/` | The agent definitions (planner, test-generator, healer, git/*, jira-import, jira-status) |
+| `.cline/agents/` | The agent definitions (planner, test-generator, healer, orchestrator, git/*, jira-import, jira-status) |
 | `.cline/skills/` | Reusable skills the agents call (playwright, cucumber, git, jira, …) |
-| `.cline/workflows/` | Multi-step recipes (`create-test`, `heal-test`, `jira-import`, `jira-status-update`) |
+| `.cline/workflows/` | Multi-step recipes (`create-test`, `heal-test`, `orchestrate`, `jira-import`, `jira-status-update`) |
 | `.clinerules/` | The rules every agent obeys (architecture, security, approval, …) |
 
 ---
@@ -81,6 +87,7 @@ The **Jira agents** mirror your BDD coverage and results into Jira.
 | **PR** | `.cline/agents/git/pr-agent.md` | Drafts a PR with real test results and report links | A PR (with approval) |
 | **Jira Import** | `.cline/agents/jira-import/jira-import-agent.md` | Imports BDD scenarios into Jira, after de-duplication | Jira test issues |
 | **Jira Status** | `.cline/agents/jira-status/jira-status-agent.md` | Syncs Jira statuses from the latest report | Updated Jira issues |
+| **Orchestrator** | `.cline/agents/orchestrator/orchestrator-agent.md` | Coordinates the full pipeline (planner → branch → generate → validate/heal → commit → push → PR) by delegating to the specialists | An end-to-end workflow driven through the specialists, with approval gates & a state file |
 
 ---
 
@@ -486,18 +493,113 @@ npm run jira:status -- QA-123 "In Progress"
 
 ---
 
-## 11. End-to-End Workflow Examples
+## 11. The Orchestrator Agent
 
-Workflows are pre-built recipes that chain agents together. There are four:
+**Job:** Run an entire automation request end-to-end by **delegating every stage** to
+the right specialist — Planner, Branch, Test Generator, Healer, Commit, Push, and
+(optionally) PR — while enforcing an **approval gate between each stage** and tracking
+progress in `.cline/state/orchestrator.json`.
+
+**Rules to remember:** the Orchestrator **never** does specialist work itself. It does
+not write scenarios, code, or Page Objects; it does not create branches, commits,
+pushes, or PRs; it does not touch Jira. It only picks the next agent, hands context
+forward, and asks for your approval at each gate.
+
+### The pipeline it coordinates
+
+```text
+User Request
+    ↓
+Planner Agent          →  BDD test plan (no code)
+    ↓  ASK USER
+Branch Agent           →  create the working branch
+    ↓  ASK USER
+Test Generator Agent   →  feature file + steps + Page Objects
+    ↓
+Validate / run tests
+    ├── pass ────────────────────┐
+    └── fail ──→ Healer (max 3) ─┴─→ re-run → must pass
+    ↓  ASK USER
+Commit Agent           →  review the diff + commit
+    ↓  ASK USER
+Push Agent             →  push the branch
+    ↓  ASK USER
+PR Agent (optional)    →  open a pull request
+```
+
+Branch creation always happens **before** the Test Generator touches the framework,
+so generated code is never written directly on `main`.
+
+### Example prompt — orchestrate a Zinc Bank login feature
+
+```
+Run the orchestrate workflow.
+
+Add BDD coverage for the Zinc Bank login flow: plan it, create the branch,
+generate the tests, validate them, and if all green, commit, push, and open a PR.
+```
+
+### What you can expect back
+
+The Orchestrator moves through the stages one at a time. After each stage it shows a
+status checklist and asks for your approval before continuing:
+
+```text
+WORKFLOW STATUS
+
+[✓] Planner
+[✓] Branch
+[✓] Test Generator
+[ ] Validation
+[ ] Commit
+[ ] Push
+
+Current State: TESTS_READY
+Next Target:   Run the validation gate
+```
+
+When the pipeline finishes it prints a **WORKFLOW SUMMARY** with real results:
+
+```text
+WORKFLOW SUMMARY
+
+Planner:       Completed
+Branch:        Created (test/zincbank-login-coverage)
+Validation:    Passed
+Healer:        Not Required
+Commit:        Created (abc1234)
+Push:          Completed
+Pull Request:  Created (#12)
+
+Tests Passed: 4   Tests Failed: 0
+Files Created: features/login/login.feature,
+               src/steps/login.steps.ts,
+               src/pages/ZincBankLoginPage.ts
+Final State: COMPLETED
+```
+
+### State, resume & recovery
+
+Progress is saved to `.cline/state/orchestrator.json` (git-ignored, same semantics as
+`.env`). If the pipeline is interrupted — you stop at an approval gate or a run
+crashes — re-invoke the Orchestrator and it **resumes** from the last completed stage
+instead of starting over. Terminal (finished) runs are retained for audit.
+
+---
+
+## 12. End-to-End Workflow Examples
+
+Workflows are pre-built recipes that chain agents together. There are five:
 
 | Workflow | File | Flow |
 | --- | --- | --- |
 | `create-test` | `.cline/workflows/create-test.md` | plan → generate → run → verify |
 | `heal-test` | `.cline/workflows/heal-test.md` | reproduce → analyze → fix (max 3) → validate |
+| `orchestrate` | `.cline/workflows/orchestrate.md` | full pipeline: plan → branch → generate → validate/heal → commit → push → PR |
 | `jira-import` | `.cline/workflows/jira-import.md` | dry-run first, then import |
 | `jira-status-update` | `.cline/workflows/jira-status-update.md` | update statuses from latest report |
 
-### 11.1 Create a new test — Zinc Bank account summary
+### 12.1 Create a new test — Zinc Bank account summary
 
 ```
 Run the create-test workflow.
@@ -516,7 +618,7 @@ The workflow will:
 3. **Run & verify** — `npx cucumber-js --tags "@<tag>"`, then `npm run verify`.
 4. **Report** — it summarizes pass/fail counts and asks before committing/pushing.
 
-### 11.2 Heal a failing test — Zinc Bank sign-in
+### 12.2 Heal a failing test — Zinc Bank sign-in
 
 ```
 Run the heal-test workflow.
@@ -527,7 +629,7 @@ The Zinc Bank "Successful sign-in" scenario is failing after the last deploy.
 The workflow will reproduce the failure, analyze the artifacts, apply up to 3 targeted
 fixes, and validate with `npm run verify` — then stop and ask you if it still fails.
 
-### 11.3 Sync results to Jira after a Zinc Bank run
+### 12.3 Sync results to Jira after a Zinc Bank run
 
 ```
 Run the jira-status-update workflow.
@@ -538,9 +640,21 @@ Use the latest Zinc Bank test report to update Jira execution results.
 It ensures a fresh report exists, then the Jira Status Agent maps scenarios to issues
 and transitions statuses — never marking a PASS when the latest result is FAIL.
 
+### 12.4 Orchestrate the whole pipeline — Zinc Bank login
+
+```
+Run the orchestrate workflow.
+
+Add BDD coverage for the Zinc Bank login flow: plan it, create the branch,
+generate the tests, validate them, and if all green, commit, push, and open a PR.
+```
+
+The Orchestrator (Section 11) drives each stage through the right specialist, pausing
+for your approval between them, and finishes with a WORKFLOW SUMMARY.
+
 ---
 
-## 12. Skills
+## 13. Skills
 
 Agents call **skills** to apply reusable, framework-specific knowledge without
 repeating large instruction blocks. You rarely invoke a skill directly — the agent does
@@ -567,7 +681,7 @@ follow the locator rules, and validate with npm run verify.
 
 ---
 
-## 13. Rules, Boundaries & Approval
+## 14. Rules, Boundaries & Approval
 
 The agents obey a shared rule set in `.clinerules/`. The most important for you as a
 user:
@@ -606,12 +720,13 @@ user:
 | Jira Status | never mark PASS when the latest result is FAIL |
 | Planner | inspect the live UI; produce a plan, **not code** |
 | Test Generator | reuse existing Page Objects/steps; **run** the test before finishing |
+| Orchestrator | delegate only — never do specialist work itself; stop at every approval gate |
 | Git agents | never commit secrets, never push/PR without approval, never commit blindly |
 
 
 ---
 
-## 14. Command Cheat Sheet
+## 15. Command Cheat Sheet
 
 | Task | Command |
 | --- | --- |
@@ -638,7 +753,7 @@ user:
 
 ---
 
-## 15. Troubleshooting
+## 16. Troubleshooting
 
 | Symptom | Likely fix |
 | --- | --- |
@@ -651,6 +766,7 @@ user:
 | Step ambiguous | Two step definitions match the same text — consolidate with parameterized steps. |
 | Secrets flagged by `verify:secrets` | Remove the real value or add a precise ignore in `scripts/verify-secrets.js`. |
 | Jira import would create duplicates | The agent de-dupes first; check the dry-run output and report existing keys. |
+| Orchestrator stops between stages | Expected — it pauses for approval at each gate. Answer and it resumes from `.cline/state/orchestrator.json`. |
 
 ---
 
