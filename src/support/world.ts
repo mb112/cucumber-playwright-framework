@@ -19,6 +19,7 @@ export class CustomWorld extends World {
 
   public scenario: ScenarioMetadata = { name: '', tags: [] };
   public consoleErrors: string[] = [];
+  public scenarioContext: Record<string, unknown> = {};
 
   constructor(options: IWorldOptions) {
     super(options);
