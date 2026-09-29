@@ -34,11 +34,11 @@ async function launchBrowser(): Promise<Browser> {
 }
 
 BeforeAll(async (): Promise<void> => {
-  // Saucedemo (and many real-world apps) uses `data-test` rather than
-  // Playwright's default `data-testid`. The framework runs under Cucumber
-  // (library API), so `playwright.config.ts` options don't apply here and the
-  // attribute must be registered globally on the Playwright selectors.
-  selectors.setTestIdAttribute('data-test');
+  // ZincBank marks its elements with `data-testid` (Playwright's default).
+  // The framework runs under Cucumber (library API), so `playwright.config.ts`
+  // options don't apply here and the attribute must be registered globally on
+  // the Playwright selectors.
+  selectors.setTestIdAttribute('data-testid');
 
   browser = await launchBrowser();
   logger.info('Environment loaded', {
@@ -77,7 +77,6 @@ Before(async function (this: CustomWorld, scenario: ITestCaseHookParameter): Pro
     this.consoleErrors.push(`Page error: ${error.message}`);
   });
 
-  this.initPageObjects();
   logger.info('Scenario started', { scenario: this.scenario.name, tags });
 });
 

@@ -23,7 +23,7 @@ export default defineConfig({
     screenshot: frameworkConfig.screenshot,
     trace: frameworkConfig.trace,
     video: frameworkConfig.video,
-    testIdAttribute: 'data-test',
+    testIdAttribute: 'data-testid',
     viewport: { width: 1280, height: 720 },
   },
   projects: [

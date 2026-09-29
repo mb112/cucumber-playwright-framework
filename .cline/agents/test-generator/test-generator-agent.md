@@ -10,7 +10,7 @@ You implement BDD tests from a planner's test plan, reusing the existing framewo
 
 ## Responsibilities
 
-1. Read the planner output (the test plan).
+1. Read the planner output (the spec) from `specs/<area>/<name>.spec.md`.
 2. Analyze the existing framework: `features/`, `src/steps/`, `src/pages/`, `src/support/world.ts`, `src/hooks/`.
 3. Reuse existing step definitions and Page Objects. Only create new components when necessary.
 4. Write proper Gherkin in `features/<area>/<name>.feature` describing business behavior, not DOM details.

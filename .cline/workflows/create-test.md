@@ -16,7 +16,8 @@ Follow this workflow when a user asks to add coverage for a new feature or requi
 Invoke the **Planner Agent** with the requirement.
 
 - Inspect the live application via the browser to confirm real labels and flows.
-- Produce a structured test plan (features, scenarios, preconditions, tags, priority).
+- Produce a structured spec (features, scenarios, preconditions, tags, priority).
+- Draft the spec, get explicit user approval, then save it to `specs/<area>/<name>.spec.md`.
 - Do NOT write implementation code at this stage.
 
 ## Step 2 - Generate

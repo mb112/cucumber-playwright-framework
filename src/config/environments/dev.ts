@@ -3,10 +3,10 @@ import { EnvironmentConfig } from '../../types';
 /**
  * Dev environment configuration.
  *
- * The example suite targets the public Swag Labs demo application
- * (saucedemo.com) - a stable test app with published demo credentials.
+ * Points at the Zinc Bank demo application (zincbank.cydeo.io), a simulated
+ * bank used for QA education.
  */
 export const devConfig: EnvironmentConfig = {
   name: 'dev',
-  baseUrl: 'https://www.saucedemo.com',
+  baseUrl: 'https://zincbank.cydeo.io',
 };

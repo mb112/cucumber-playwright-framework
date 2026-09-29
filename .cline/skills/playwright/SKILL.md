@@ -14,7 +14,7 @@ description: Use Playwright best practices in this framework - auto-waiting, rec
 
 ## Framework specifics
 
-- `testIdAttribute` is registered globally as `data-test` via `selectors.setTestIdAttribute('data-test')` in `BeforeAll` — Saucedemo uses `data-test`, not `data-testid`.
+- `testIdAttribute` is registered globally as `data-testid` via `selectors.setTestIdAttribute('data-testid')` in `BeforeAll` — ZincBank uses `data-testid` (Playwright's default).
 - Each scenario gets a fresh `BrowserContext` + `Page` (see `src/support/world.ts` and `src/hooks/hooks.ts`).
 - Page Objects expose `waitForReady()` and `waitForPage()` (on base page) for navigation assertions.
 

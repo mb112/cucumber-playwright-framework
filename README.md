@@ -68,6 +68,7 @@ project-root/
 │   ├── skills/                  # playwright, cucumber, page-object-model, test-design, test-healing, git, jira, reporting, environment-management
 │   └── workflows/               # create-test, heal-test, jira-import, jira-status-update
 ├── .clinerules/                 # architecture, coding-standards, playwright, cucumber, locator, environment, git, agent, security, approval rules
+├── specs/                       # BDD specs from the Planner Agent (written only after user approval)
 ├── .github/workflows/           # test.yml, smoke.yml, regression.yml
 ├── features/                    # Gherkin features, grouped by area
 │   └── login/login.feature

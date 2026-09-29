@@ -3,6 +3,7 @@
 Always ask for explicit user approval before:
 
 - Creating, modifying, or deleting any file outside the task scope.
+- Creating a file under the `specs/` folder — the agent must present the spec and get explicit user approval before writing it.
 - Deleting any file or directory, including tests, reports, or scripts.
 - Committing, pushing, force-pushing, or opening a pull request.
 - Creating Jira issues or changing Jira issue statuses (dry-run first).
