@@ -8,7 +8,7 @@ prompts** you can paste into the chat. All examples use the
 **[Zinc Bank](https://zincbank.cydeo.io)** simulated banking app (a CYDEO QA teaching
 project), so you can follow along against a real, deterministic target.
 
-> This is a *usage* guide. It tells you **how to drive the agents** — it does not
+> This is a _usage_ guide. It tells you **how to drive the agents** — it does not
 > describe how to build the framework. For framework internals see
 > [`README.md`](./README.md).
 
@@ -65,29 +65,29 @@ itself — it only delegates (see [Section 11](#11-the-orchestrator-agent)).
 
 ### Where they live
 
-| Path | Contents |
-| --- | --- |
-| `.cline/agents/` | The agent definitions (planner, test-generator, healer, orchestrator, git/*, jira-import, jira-status) |
-| `.cline/skills/` | Reusable skills the agents call (playwright, cucumber, git, jira, …) |
-| `.cline/workflows/` | Multi-step recipes (`create-test`, `heal-test`, `orchestrate`, `jira-import`, `jira-status-update`) |
-| `.clinerules/` | The rules every agent obeys (architecture, security, approval, …) |
+| Path                | Contents                                                                                               |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| `.cline/agents/`    | The agent definitions (planner, test-generator, healer, orchestrator, git/*, jira-import, jira-status) |
+| `.cline/skills/`    | Reusable skills the agents call (playwright, cucumber, git, jira, …)                                   |
+| `.cline/workflows/` | Multi-step recipes (`create-test`, `heal-test`, `orchestrate`, `jira-import`, `jira-status-update`)    |
+| `.clinerules/`      | The rules every agent obeys (architecture, security, approval, …)                                      |
 
 ---
 
 ## 2. Quick Reference
 
-| Agent | Agent file | What it does | Produces |
-| --- | --- | --- | --- |
-| **Planner** | `.cline/agents/planner/planner-agent.md` | Inspects the live UI and turns a requirement into a BDD spec | A spec saved under `specs/` (**no code**, written only after user approval) |
-| **Test Generator** | `.cline/agents/test-generator/test-generator-agent.md` | Turns the plan into working code, reusing existing framework pieces | `.feature`, `*.steps.ts`, Page Objects |
-| **Healer** | `.cline/agents/healer/healer-agent.md` | Diagnoses and repairs a failing scenario | Fixed code (max **3 attempts**) |
-| **Branch** | `.cline/agents/git/branch-agent.md` | Creates a correctly named branch | A new git branch |
-| **Commit** | `.cline/agents/git/commit-agent.md` | Reviews the diff, blocks secrets, writes a Conventional Commit | A commit |
-| **Push** | `.cline/agents/git/push-agent.md` | Pushes the branch (with approval) | A remote push |
-| **PR** | `.cline/agents/git/pr-agent.md` | Drafts a PR with real test results and report links | A PR (with approval) |
-| **Jira Import** | `.cline/agents/jira-import/jira-import-agent.md` | Imports BDD scenarios into Jira, after de-duplication | Jira test issues |
-| **Jira Status** | `.cline/agents/jira-status/jira-status-agent.md` | Syncs Jira statuses from the latest report | Updated Jira issues |
-| **Orchestrator** | `.cline/agents/orchestrator/orchestrator-agent.md` | Coordinates the full pipeline (planner → branch → generate → validate/heal → commit → push → PR) by delegating to the specialists | An end-to-end workflow driven through the specialists, with approval gates & a state file |
+| Agent              | Agent file                                             | What it does                                                                                                                      | Produces                                                                                  |
+| ------------------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Planner**        | `.cline/agents/planner/planner-agent.md`               | Inspects the live UI and turns a requirement into a BDD spec                                                                      | A spec saved under `specs/` (**no code**, written only after user approval)               |
+| **Test Generator** | `.cline/agents/test-generator/test-generator-agent.md` | Turns the plan into working code, reusing existing framework pieces                                                               | `.feature`, `*.steps.ts`, Page Objects                                                    |
+| **Healer**         | `.cline/agents/healer/healer-agent.md`                 | Diagnoses and repairs a failing scenario                                                                                          | Fixed code (max **3 attempts**)                                                           |
+| **Branch**         | `.cline/agents/git/branch-agent.md`                    | Creates a correctly named branch                                                                                                  | A new git branch                                                                          |
+| **Commit**         | `.cline/agents/git/commit-agent.md`                    | Reviews the diff, blocks secrets, writes a Conventional Commit                                                                    | A commit                                                                                  |
+| **Push**           | `.cline/agents/git/push-agent.md`                      | Pushes the branch (with approval)                                                                                                 | A remote push                                                                             |
+| **PR**             | `.cline/agents/git/pr-agent.md`                        | Drafts a PR with real test results and report links                                                                               | A PR (with approval)                                                                      |
+| **Jira Import**    | `.cline/agents/jira-import/jira-import-agent.md`       | Imports BDD scenarios into Jira, after de-duplication                                                                             | Jira test issues                                                                          |
+| **Jira Status**    | `.cline/agents/jira-status/jira-status-agent.md`       | Syncs Jira statuses from the latest report                                                                                        | Updated Jira issues                                                                       |
+| **Orchestrator**   | `.cline/agents/orchestrator/orchestrator-agent.md`     | Coordinates the full pipeline (planner → branch → generate → validate/heal → commit → push → PR) by delegating to the specialists | An end-to-end workflow driven through the specialists, with approval gates & a state file |
 
 ---
 
@@ -132,9 +132,9 @@ automatically, based on what you ask for.
 
 The three ways to work with them:
 
-1. **Single agent** — ask directly: *"Use the Planner agent to plan login tests for Zinc Bank."*
-2. **A workflow** — invoke a named recipe: *"Run the create-test workflow for Zinc Bank login."*
-3. **Plain instruction** — the framework infers which agent fits: *"Zinc Bank login test is failing, fix it."*
+1. **Single agent** — ask directly: _"Use the Planner agent to plan login tests for Zinc Bank."_
+2. **A workflow** — invoke a named recipe: _"Run the create-test workflow for Zinc Bank login."_
+3. **Plain instruction** — the framework infers which agent fits: _"Zinc Bank login test is failing, fix it."_
 
 There is no special command needed to "activate" an agent. Just describe the task and
 let the agent follow its definition, skills, and rules.
@@ -204,7 +204,6 @@ means the **Email** and **Password** fields and the **Sign in** button it found 
 
 > Because the planner inspects the live UI, the labels in its plan (e.g. "Email",
 > "Password", "Sign in") are grounded in the real page, not guessed.
-
 
 ---
 
@@ -340,7 +339,6 @@ If it still fails after 3 attempts, the healer **stops** — it will not keep ch
 code. That is your signal to jump in (the change may be an environment issue, a real
 product bug, or a requirement change).
 
-
 ---
 
 ## 8. The Git Agents
@@ -360,12 +358,12 @@ Use the Branch agent. Create a branch for the Zinc Bank login tests.
 
 It follows the naming convention:
 
-| Type | Prefix | Example |
-| --- | --- | --- |
-| Feature | `feature/` | `feature/zincbank-login-tests` |
-| Bug fix | `bugfix/` | `bugfix/zincbank-signin-selector` |
-| Test | `test/` | `test/add-zincbank-transfer-scenarios` |
-| Chore | `chore/` | `chore/update-playwright` |
+| Type    | Prefix     | Example                                |
+| ------- | ---------- | -------------------------------------- |
+| Feature | `feature/` | `feature/zincbank-login-tests`         |
+| Bug fix | `bugfix/`  | `bugfix/zincbank-signin-selector`      |
+| Test    | `test/`    | `test/add-zincbank-transfer-scenarios` |
+| Chore   | `chore/`   | `chore/update-playwright`              |
 
 It ensures you're not working directly on `main` and that the branch doesn't already
 exist.
@@ -490,7 +488,6 @@ Mark passing scenarios accordingly and add failure details for any that failed.
 npm run jira:status -- QA-123 "In Progress"
 ```
 
-
 ---
 
 ## 11. The Orchestrator Agent
@@ -591,13 +588,13 @@ instead of starting over. Terminal (finished) runs are retained for audit.
 
 Workflows are pre-built recipes that chain agents together. There are five:
 
-| Workflow | File | Flow |
-| --- | --- | --- |
-| `create-test` | `.cline/workflows/create-test.md` | plan → generate → run → verify |
-| `heal-test` | `.cline/workflows/heal-test.md` | reproduce → analyze → fix (max 3) → validate |
-| `orchestrate` | `.cline/workflows/orchestrate.md` | full pipeline: plan → branch → generate → validate/heal → commit → push → PR |
-| `jira-import` | `.cline/workflows/jira-import.md` | dry-run first, then import |
-| `jira-status-update` | `.cline/workflows/jira-status-update.md` | update statuses from latest report |
+| Workflow             | File                                     | Flow                                                                         |
+| -------------------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
+| `create-test`        | `.cline/workflows/create-test.md`        | plan → generate → run → verify                                               |
+| `heal-test`          | `.cline/workflows/heal-test.md`          | reproduce → analyze → fix (max 3) → validate                                 |
+| `orchestrate`        | `.cline/workflows/orchestrate.md`        | full pipeline: plan → branch → generate → validate/heal → commit → push → PR |
+| `jira-import`        | `.cline/workflows/jira-import.md`        | dry-run first, then import                                                   |
+| `jira-status-update` | `.cline/workflows/jira-status-update.md` | update statuses from latest report                                           |
 
 ### 12.1 Create a new test — Zinc Bank account summary
 
@@ -660,17 +657,17 @@ Agents call **skills** to apply reusable, framework-specific knowledge without
 repeating large instruction blocks. You rarely invoke a skill directly — the agent does
 it for you. The available skills:
 
-| Skill | Purpose |
-| --- | --- |
-| `playwright` | Auto-waiting, recommended locators, `data-test` attribute, headed/debug runs |
-| `cucumber` | Correct Gherkin, tags, step definitions, the custom `World`, dry-run |
-| `page-object-model` | Page Object conventions, composition, `waitForReady()`/`waitForPage()` |
-| `test-design` | Positive/negative/boundary coverage, isolated scenarios, tagging |
-| `test-healing` | Evidence-first diagnosis, max 3 attempts, common root causes |
-| `git` | Branch naming, Conventional Commits, secret blocking, approval gates |
-| `jira` | Import + status scripts, de-duplication, dry-run first |
-| `reporting` | Generate/inspect Cucumber + Allure reports, failure artifacts |
-| `environment-management` | Multi-env config (`dev`/`qa`/`stage`/`prod`), `.env`, browser selection |
+| Skill                    | Purpose                                                                      |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `playwright`             | Auto-waiting, recommended locators, `data-test` attribute, headed/debug runs |
+| `cucumber`               | Correct Gherkin, tags, step definitions, the custom `World`, dry-run         |
+| `page-object-model`      | Page Object conventions, composition, `waitForReady()`/`waitForPage()`       |
+| `test-design`            | Positive/negative/boundary coverage, isolated scenarios, tagging             |
+| `test-healing`           | Evidence-first diagnosis, max 3 attempts, common root causes                 |
+| `git`                    | Branch naming, Conventional Commits, secret blocking, approval gates         |
+| `jira`                   | Import + status scripts, de-duplication, dry-run first                       |
+| `reporting`              | Generate/inspect Cucumber + Allure reports, failure artifacts                |
+| `environment-management` | Multi-env config (`dev`/`qa`/`stage`/`prod`), `.env`, browser selection      |
 
 Example of a skill-driven prompt (the agent will use the relevant skills internally):
 
@@ -713,60 +710,59 @@ user:
 
 ### Agent-specific boundaries
 
-| Agent | Hard boundary |
-| --- | --- |
-| Healer | max **3** healing attempts, then ask the user |
-| Jira Import | search for duplicates first; never create duplicates |
-| Jira Status | never mark PASS when the latest result is FAIL |
-| Planner | inspect the live UI; produce a plan, **not code** |
-| Test Generator | reuse existing Page Objects/steps; **run** the test before finishing |
-| Orchestrator | delegate only — never do specialist work itself; stop at every approval gate |
-| Git agents | never commit secrets, never push/PR without approval, never commit blindly |
-
+| Agent          | Hard boundary                                                                |
+| -------------- | ---------------------------------------------------------------------------- |
+| Healer         | max **3** healing attempts, then ask the user                                |
+| Jira Import    | search for duplicates first; never create duplicates                         |
+| Jira Status    | never mark PASS when the latest result is FAIL                               |
+| Planner        | inspect the live UI; produce a plan, **not code**                            |
+| Test Generator | reuse existing Page Objects/steps; **run** the test before finishing         |
+| Orchestrator   | delegate only — never do specialist work itself; stop at every approval gate |
+| Git agents     | never commit secrets, never push/PR without approval, never commit blindly   |
 
 ---
 
 ## 15. Command Cheat Sheet
 
-| Task | Command |
-| --- | --- |
-| Full suite | `npm test` |
-| Smoke suite | `npm run test:smoke` |
-| Sanity suite | `npm run test:sanity` |
-| Critical suite | `npm run test:critical` |
-| Regression suite | `npm run test:regression` |
-| WIP suite | `npm run test:wip` |
-| Headed run | `npm run test:headed` |
-| Debug (Playwright API log) | `npm run test:debug` |
-| Validate steps only | `npm run test:dry-run` |
-| Browser-specific | `npm run test:chromium` / `test:firefox` / `test:webkit` |
-| Choose environment | `ENV=qa npm test` |
-| Cucumber HTML/JSON + summary | `npm run report:cucumber` |
-| Generate Allure report | `npm run report:allure` |
-| Open Allure report | `npm run report:allure:open` |
-| Quality gate | `npm run verify` |
-| Secret scan | `npm run verify:secrets` |
-| Jira import (dry-run) | `npm run jira:import:dry-run` |
-| Jira import | `npm run jira:import` |
-| Jira status update | `npm run jira:status -- <KEY> <STATUS>` |
-| Install browsers | `npm run install:browsers` |
+| Task                         | Command                                                  |
+| ---------------------------- | -------------------------------------------------------- |
+| Full suite                   | `npm test`                                               |
+| Smoke suite                  | `npm run test:smoke`                                     |
+| Sanity suite                 | `npm run test:sanity`                                    |
+| Critical suite               | `npm run test:critical`                                  |
+| Regression suite             | `npm run test:regression`                                |
+| WIP suite                    | `npm run test:wip`                                       |
+| Headed run                   | `npm run test:headed`                                    |
+| Debug (Playwright API log)   | `npm run test:debug`                                     |
+| Validate steps only          | `npm run test:dry-run`                                   |
+| Browser-specific             | `npm run test:chromium` / `test:firefox` / `test:webkit` |
+| Choose environment           | `ENV=qa npm test`                                        |
+| Cucumber HTML/JSON + summary | `npm run report:cucumber`                                |
+| Generate Allure report       | `npm run report:allure`                                  |
+| Open Allure report           | `npm run report:allure:open`                             |
+| Quality gate                 | `npm run verify`                                         |
+| Secret scan                  | `npm run verify:secrets`                                 |
+| Jira import (dry-run)        | `npm run jira:import:dry-run`                            |
+| Jira import                  | `npm run jira:import`                                    |
+| Jira status update           | `npm run jira:status -- <KEY> <STATUS>`                  |
+| Install browsers             | `npm run install:browsers`                               |
 
 ---
 
 ## 16. Troubleshooting
 
-| Symptom | Likely fix |
-| --- | --- |
-| Agent created a plan but no code | Expected — the **Planner never writes code**. Ask the **Test Generator** next. |
-| Healer keeps failing after many tries | It is capped at 3 attempts; once it stops, investigate env/data or raise with the team. |
-| `getByTestId` can't find elements | Zinc Bank uses `data-test` (registered globally). Use `data-test` attributes. |
-| Tests fail only in CI | Credentials missing — add GitHub Secrets / Jenkins Credentials and run `prepare-env`. |
-| `npx playwright install` needed | Install the browser for the machine: `npx playwright install chromium`. |
-| Parallel flakiness | Lower `WORKERS`; ensure scenarios are isolated (fresh context per scenario). |
-| Step ambiguous | Two step definitions match the same text — consolidate with parameterized steps. |
-| Secrets flagged by `verify:secrets` | Remove the real value or add a precise ignore in `scripts/verify-secrets.js`. |
-| Jira import would create duplicates | The agent de-dupes first; check the dry-run output and report existing keys. |
-| Orchestrator stops between stages | Expected — it pauses for approval at each gate. Answer and it resumes from `.cline/state/orchestrator.json`. |
+| Symptom                               | Likely fix                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Agent created a plan but no code      | Expected — the **Planner never writes code**. Ask the **Test Generator** next.                               |
+| Healer keeps failing after many tries | It is capped at 3 attempts; once it stops, investigate env/data or raise with the team.                      |
+| `getByTestId` can't find elements     | Zinc Bank uses `data-test` (registered globally). Use `data-test` attributes.                                |
+| Tests fail only in CI                 | Credentials missing — add GitHub Secrets / Jenkins Credentials and run `prepare-env`.                        |
+| `npx playwright install` needed       | Install the browser for the machine: `npx playwright install chromium`.                                      |
+| Parallel flakiness                    | Lower `WORKERS`; ensure scenarios are isolated (fresh context per scenario).                                 |
+| Step ambiguous                        | Two step definitions match the same text — consolidate with parameterized steps.                             |
+| Secrets flagged by `verify:secrets`   | Remove the real value or add a precise ignore in `scripts/verify-secrets.js`.                                |
+| Jira import would create duplicates   | The agent de-dupes first; check the dry-run output and report existing keys.                                 |
+| Orchestrator stops between stages     | Expected — it pauses for approval at each gate. Answer and it resumes from `.cline/state/orchestrator.json`. |
 
 ---
 
@@ -784,5 +780,3 @@ The examples in this guide reference the real Zinc Bank UI (confirmed at
 
 Use these exact labels when you prompt the Planner so it confirms them against the
 live app, and so the Test Generator picks stable, user-visible locators.
-
-
