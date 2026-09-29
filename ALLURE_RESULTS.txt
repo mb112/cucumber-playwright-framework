@@ -1,0 +1,81 @@
+================================================================================
+              ZincBank Login Test Suite - Allure Results
+                    Report Generated: Sep 29, 2026
+================================================================================
+
+SUMMARY STATISTICS
+─────────────────────────────────────────────────────────────────────────────
+
+   Total Tests:              3
+   ✅ Passed:                3 (100%)
+   ❌ Failed:                0
+   ⏭️  Skipped:              0
+   ⏱️  Total Execution Time:  3.687 seconds
+   ⚡ Average per Test:      1.229 seconds
+
+─────────────────────────────────────────────────────────────────────────────
+
+TEST SCENARIOS
+─────────────────────────────────────────────────────────────────────────────
+
+ [1/3] ✅ Successful sign-in with valid credentials
+       Tag: @smoke | Duration: 2s 544ms | Status: PASSED
+
+ [2/3] ✅ Empty fields show required-field error
+       Tag: @sanity | Duration: 483ms | Status: PASSED
+
+ [3/3] ✅ Open an account link leads to the registration page
+       Tag: @sanity | Duration: 613ms | Status: PASSED
+
+─────────────────────────────────────────────────────────────────────────────
+
+KEY METRICS
+─────────────────────────────────────────────────────────────────────────────
+
+Success Rate:       100% (3/3 tests passed)
+Failure Rate:       0% (0 failures)
+Flakiness Rate:     0% (0 flaky tests)
+Average Duration:   1.229 seconds per test
+Total Duration:     3.687 seconds
+Execution Status:   ALL TESTS PASSING ✅
+
+─────────────────────────────────────────────────────────────────────────────
+
+REPORT DOCUMENTATION
+─────────────────────────────────────────────────────────────────────────────
+
+Documentation Files:
+  • ALLURE_REPORT_SUMMARY.md    - Full detailed report (242 lines, 6.9KB)
+  • QUICK_REFERENCE.md          - Quick command reference (2.4KB)
+  • ALLURE_RESULTS.txt          - This file
+
+Interactive HTML Report:
+  • reports/allure-report/index.html         - Main report dashboard
+  • reports/allure-report/test-results.json  - Test data
+  • reports/allure-report/summary.json       - Metadata
+
+Screenshots (4 images):
+  • reports/allure-report/screenshots/allure-overview.png
+  • reports/allure-report/screenshots/allure-tree.png
+  • reports/allure-report/screenshots/allure-test-detail.png
+  • reports/allure-report/screenshots/allure-overview-final.png
+
+─────────────────────────────────────────────────────────────────────────────
+
+QUICK COMMANDS
+─────────────────────────────────────────────────────────────────────────────
+
+npm test                    # Run all tests
+npm run test:smoke          # Run @smoke tests only
+npm run test:sanity         # Run @sanity tests only
+npm run report:allure       # Generate Allure report
+npm run report:allure:open  # Open report in browser
+
+─────────────────────────────────────────────────────────────────────────────
+
+✅ STATUS: ALL TESTS PASSING - READY FOR PRODUCTION
+
+Generated: September 29, 2026 at 18:33:39 UTC
+Report ID: 1b1dafd0-f873-4413-9e6a-1a34f56fd36b
+Allure Version: 3.17.0
+================================================================================
